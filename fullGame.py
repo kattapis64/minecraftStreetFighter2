@@ -2,21 +2,20 @@
 import subprocess
 import pygame
 import sys
+#กำหนด resolution
 n= 10
-running = True
-pygame.init()
-game_started = False
+running = True#ตัวแปรควบคุมว่าหน้าจอจะปิดหรือไม่
+pygame.init()#สร้างใน pygame
+game_started = False#เกมจริงยังไม่เริ่ม
 screen = pygame.display.set_mode((1280,770))#สร้างหน้าจอ
 pygame.display.set_caption("Minecraft Street Fighter")#กำหนดชื่อ
-clock = pygame.time.Clock()
-background  = pygame.Surface((128*n,77*n))
-test_surface  = pygame.Surface((100,200))
-test_surface.fill('green')
-test_rect = test_surface.get_rect()
-rect_gravity =0
+clock = pygame.time.Clock()#กำหนดนาฬิกา fps
+background  = pygame.Surface((128*n,77*n)) #background surface
+
+rect_gravity =0 #
 #ฟังก์ชันสำหรับการเริ่มหน้าจอใหม่
-def start_screen(events):
-    global game_started
+def start_screen(events):#function splash screen
+    global game_started # call from global
     #Load Title Screen
     splash_screen_rect = pygame.transform.scale(pygame.image.load('assets/start/title_normal'), (1280, 770))
     splash_screen_rect_rect = splash_screen_rect.get_rect()
@@ -41,35 +40,37 @@ def start_screen(events):
 #================ฟังก์ชันสำหรับหน้าเลือกตัวละคร=====================
 def choosechar(events):
     global player1,player2
-    #initialize icons
+    #initialize icons for choosing
+    #Background
     bg_surf = pygame.transform.scale(pygame.image.load('assets/map/characterselect_bg_3'), (1280, 770))
     bg_rect = bg_surf.get_rect()
     screen.blit(bg_surf,bg_rect)
+    #Happy Ghast for player1
     char1_p1 = pygame.transform.scale(pygame.image.load('assets/map/happyghast_prev'), (210, 210))
-
     char1_p1_rect = char1_p1.get_rect(topleft=(110,250))
-
+    #blaze for player1
     char2_p1 = pygame.transform.scale(pygame.image.load('assets/map/blaze_prev'), (210, 210))
     char2_p1_rect = char2_p1.get_rect(topleft=(370,250))
-
+    #vindicator for player1
     char3_p1 =pygame.transform.scale(pygame.image.load('assets/map/vindicator_prev'), (210, 210))
     char3_p1_rect = char3_p1.get_rect(topleft=(650,250))
 
+    #happy ghast player 2
     char1_p2 =pygame.transform.scale(pygame.image.load('assets/map/happyghast_prev'), (210, 210))
     char1_p2_rect = char1_p2.get_rect(topleft=(110,500))
-
+    #blaze for player 2
     char2_p2 = pygame.transform.scale(pygame.image.load('assets/map/blaze_prev'), (210, 210))
     char2_p2_rect = char2_p2.get_rect(topleft=(370,500))
-
+    #vindicator player 2
     char3_p2 = pygame.transform.scale(pygame.image.load('assets/map/vindicator_prev'), (210, 210))
     char3_p2_rect = char3_p2.get_rect(topleft=(650,520))
-
+    #loop through event finding mouse click
     for event in events:
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and map_choice is None:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and map_choice is None:#if havent choosen map
             if char1_p1_rect.collidepoint(event.pos):
                 print("P1 Chose 1")
                 player1= '1'
-                char1_p1.fill('black')
+                char1_p1.fill('black')#for click effect
             elif char2_p1_rect.collidepoint(event.pos):
                 print("P1 Chose 2")
                 player1= '2'
@@ -139,18 +140,14 @@ while running:
                 rect_gravity = -20
 
     rect_gravity+=1
-    test_rect.y += rect_gravity
-    screen.blit(background,(0,0))
-    if test_rect.bottom >700:test_rect.bottom=700
-    screen.blit(test_surface,test_rect)
     #Call Previous functions
     if not game_started:
         start_screen(events)
-        player1=None
+        player1=None#set for player 1 and 2
         player2=None
     elif game_started: # will be executed if hit gamestart
         if player1 is None or player2 is None:
-            screen.fill('black')
+            screen.fill('black')#clear screen
             choosechar(events)
             map_choice=None
         elif map_choice is None:# will be executed after chosing character
@@ -271,7 +268,7 @@ counter_ravager_p2=0
 ravager_p2 = False
 
 
-#=============================เลือกไฟล์ภาพตัวละครจาก ตัวแปร  player 1 และ player2
+#=============================เลือกไฟล์ภาพตัวละครจาก ตัวแปร  player 1 และ player2==============
 if player1 == '1':
     icon1 = pygame.transform.scale(pygame.image.load("assets/map/happyghast_prev").convert_alpha(), (108 * 4.5, 112 * 4.5))
     player1Surf = pygame.transform.scale(pygame.image.load("assets/Happy_Ghast.png").convert_alpha(), (108 * 6, 112 * 6))
@@ -335,7 +332,7 @@ quit_rect = quit_surf.get_rect()
 quit_rect.x = 700
 quit_rect.y = 650
 
-
+#main game loop
 while True:
     # โหลดแบกราวตามแมพที่เลือก
     if map_choice == 1:
@@ -360,10 +357,10 @@ while True:
     #draw background
     screen.blit(background_surf,background_rect )
     #การฟื้นฟูของพลังชีวิตและพลังงาน
-    health_player1 +=0.5/60
-    health_player2 +=0.5/ 60
-    energy_player1 += 2 / 60
-    energy_player2 += 2/ 60
+    health_player1 +=15/60
+    health_player2 +=15/ 60
+    energy_player1 += 30/ 60
+    energy_player2 += 30/ 60
     #cap health and energy
     if health_player1 > 100:
         health_player1 =100
@@ -382,33 +379,57 @@ while True:
             player1Surf = pygame.transform.flip(pygame.transform.scale(pygame.image.load(
                 "assets/Happy_Ghast.png").convert_alpha(),
                                                                        (108 * 4.5, 112 * 4.5)),True,False)
+        else:
+            player1Surf = pygame.transform.scale(pygame.image.load(
+                "assets/Happy_Ghast.png").convert_alpha(),(108 * 4.5, 112 * 4.5))
+
+
     elif player1 =='2':
         if player1Rect.x < player2Rect.x:
             player1Surf = pygame.transform.flip(pygame.transform.scale(pygame.image.load(
                 "assets/Blaze.png").convert_alpha(),
                                                                        (164 * 2, 232 * 2)),True,False)
+        else:
+            player1Surf = pygame.transform.scale(pygame.image.load(
+                "assets/Blaze.png").convert_alpha(),
+                                                                       (164 * 2, 232 * 2))
 
     elif player1 =='3':
         if player1Rect.x < player2Rect.x:
             player1Surf = pygame.transform.flip(pygame.transform.scale(pygame.image.load(
                 "assets/Pillager.png").convert_alpha(),
                                                                        (148 * 2, 238 * 2)),True,False)
+        else:
+            player1Surf = pygame.transform.scale(pygame.image.load(
+                "assets/Pillager.png").convert_alpha(),
+                                   (148 * 2, 238 * 2))
+
     if player2 == '1':
         if player2Rect.x > player1Rect.x:
             player2Surf = pygame.transform.flip(
                 pygame.transform.scale(pygame.image.load("assets/Happy_Ghast.png").convert_alpha(),
                                        (108 * 4.5, 112 * 4.5)), True, False)
+        else:
+            player2Surf = pygame.transform.scale(pygame.image.load("assets/Happy_Ghast.png").convert_alpha(),
+                                       (108 * 4.5, 112 * 4.5))
+
     elif player2 == '2':
         if player1Rect.x > player2Rect.x:
             player2Surf = pygame.transform.flip(
                 pygame.transform.scale(pygame.image.load("assets/Blaze.png").convert_alpha(),
                                        (164 * 2, 232 * 2)), True, False)
+        else:
+            player2Surf =pygame.transform.scale(pygame.image.load("assets/Blaze.png").convert_alpha(),
+                                       (164 * 2, 232 * 2))
 
     elif player2 == '3':
         if player1Rect.x > player2Rect.x:
             player2Surf = pygame.transform.flip(
                 pygame.transform.scale(pygame.image.load("assets/Pillager.png").convert_alpha(),
                                        (148 * 2, 238 * 2)), True, False)
+        else:
+            player2Surf =pygame.transform.scale(pygame.image.load("assets/Pillager.png").convert_alpha(),
+                                       (148 * 2, 238 * 2))
     #=================code การเคลื่อนที่ของ projectile ต่างๆ===================
     if player1 =='1':
         if show_snowball_rect and energy_player1 >8:
@@ -475,8 +496,8 @@ while True:
             arrow_rect2.y = player2Rect.y+150
     if player2 =='1' and show_laser:
         if laser_rect.colliderect(player1Rect):
-            health_player1 -= 8
-        energy_player2 -= 5
+            health_player1 -= 5
+        energy_player2 -= 8
         if player1Rect.x > player2Rect.x:
             laser_rect.x += 500
         else:
@@ -486,8 +507,8 @@ while True:
 
     if player1 =='1' and show_laser2:
         if laser_rect2.colliderect(player2Rect):
-            health_player2 -= 8
-        energy_player1 -= 5
+            health_player2 -= 5
+        energy_player1 -= 8
         if player1Rect.x > player2Rect.x:
             laser_rect2.x -= 200
         else:
@@ -557,6 +578,7 @@ while True:
         energy_surf2 = pygame.transform.scale(pygame.image.load('assets/energy/25'), (500, 100))
     elif energy_player1 > 0:
         energy_surf2 = pygame.transform.scale(pygame.image.load('assets/energy/0'), (500, 100))
+        #===========================================================================================
     #แสดงผลค่าพลังงาน
     health_rect1 = health_surf1.get_rect()
     health_rect2 = health_surf2.get_rect()
@@ -575,6 +597,7 @@ while True:
 
     screen.blit(energy_surf1, energy_rect1)
     screen.blit(energy_surf2, energy_rect2)
+
     #gravity
     rect_gravity1+=10
     rect_gravity2+=10
@@ -600,21 +623,27 @@ while True:
 
         if event.type == pygame.KEYDOWN:
             print(event.key)
+            #detect crouch player2
             if event.key == pygame.K_s:
                 crouched_p2 = True
+            #ignore up an down at same time
             if keys[pygame.K_UP] and keys[pygame.K_DOWN]:
                 pass
+            #detect jump player1
             elif event.key == pygame.K_UP and player1Rect.y==250:
                 rect_gravity1 = -70
+            #detect crouch player 1
             elif event.key == pygame.K_DOWN:
                 crouched_p1 = True
+            #ignore up and down at the same time
             if keys[pygame.K_w] and keys[pygame.K_s]:
                 continue
+                # detect jump player 2
             elif event.key == pygame.K_w and player2Rect.y == 250:
                 rect_gravity2 = -70
 
 
-
+            #Comma detection for melee skill player 1
             elif event.key == pygame.K_COMMA :
                 if player1Rect.colliderect(player2Rect):
                     if player1=='1':
@@ -627,7 +656,7 @@ while True:
                     elif player1=='3':
                         pillager_axe_p1 = True
                         health_player2-=8
-
+            # Period detection for ranged skill player 1
             elif event.key == pygame.K_PERIOD:
                 show_proj_1 = True
                 if player1 =='1':
@@ -639,7 +668,7 @@ while True:
                 if player1=='3':
                     show_arrow =True
                     pillager_cr_p1 = True
-
+            # SLASH detection for ultimate skill player 1
             elif (event.key == pygame.K_SLASH) and (energy_player1>0) and (player1 == '1') :
                 show_laser2=True
                 ghast_laser_p1 = True
@@ -650,14 +679,14 @@ while True:
                 show_laser = False
                 show_laser2 = False
                 if player1Rect.x > player2Rect.x:
-                    player1Rect.x = player2Rect.x - 800
+                    player1Rect.x = player2Rect.x + 200
                 else:
-                    player1Rect.x = player2Rect.x - 800
-                ravager_p2 = True
+                    player1Rect.x = player2Rect.x - 200
+                ravager_p1 = True
 
-                health_player2 -= 50
+                health_player2 -= 30
                 energy_player1 -= 50
-
+            # q detection for melee skill player 2
             elif event.key == pygame.K_q :
                 if player1Rect.colliderect(player2Rect):
                     if player2=='1':
@@ -670,7 +699,7 @@ while True:
                     elif player2=='3':
                         pillager_axe_p2 = True
                         health_player1-=8
-
+            # e detection for ranged skill player 2
             elif event.key == pygame.K_e:
 
                 if player2 =='1':
@@ -683,7 +712,7 @@ while True:
                 if player2=='3':
                     show_arrow2 =True
                     pillager_cr_p2 = True
-
+            # r detection for ultimate skill player 2
             if event.key == pygame.K_r and player2 == '1' and energy_player2>80:
                 show_laser = True
                 ghast_laser_p2 = True
@@ -699,9 +728,10 @@ while True:
                     player2Rect.x = player1Rect.x-800
                 ravager_p2 = True
 
-                health_player1-=50
+                health_player1-=30
                 energy_player2-=50
-
+        # finishing job when key was unpressed or lifted
+        # set animation states to FALSE for all
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN and player1Rect.y == 250:
                 crouched_p1 = False
@@ -780,6 +810,7 @@ while True:
                 blaze_throw_all_p2 = False
             if event.key == pygame.K_r and player2 == '3':
                 ravager_p2 = False
+    #for movement key ; outside loop to be able to hold
     if keys[pygame.K_RIGHT]:
         player1Rect.x += movement_speed
         if player1Rect.x > 128*n:
@@ -796,7 +827,6 @@ while True:
         player2Rect.x += movement_speed
         if player2Rect.x > 128 * n:
             player2Rect.x = 128 * n-player2Rect.width
-
 
     if keys[pygame.K_a]:
         player2Rect.x -= movement_speed
@@ -824,6 +854,7 @@ while True:
     if show_rods2:
         screen.blit(rods_surf2,rods_rect2)
     # ==================================Animation Player 1========================================
+
     if ghast_header_p1:
         counter_ghast_header_p1 += 12
         if player1Rect.x < player2Rect.x:
@@ -1494,7 +1525,7 @@ while True:
 
 
         screen.blit(background_surf, background_rect)
-        screen.blit(victoryp2_surf, victoryp2_rect)
+        screen.blit(victoryp1_surf, victoryp1_rect)
         screen.blit(restart_surf, restart_rect)
         screen.blit(quit_surf, quit_rect)
         events = pygame.event.get()
@@ -1508,9 +1539,6 @@ while True:
                     subprocess.run(['python', 'fullGame.py'])
                     sys.exit()
 
-
-    #pygame.draw.rect(screen, 'cyan', player1Rect)
-    #pygame.draw.rect(screen, 'green', player2Rect)
     prev_health_p1 = health_player1
     prev_health_p2 = health_player2
     pygame.display.flip()
